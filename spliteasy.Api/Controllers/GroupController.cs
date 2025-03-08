@@ -39,7 +39,7 @@ namespace ExpenseSharingApp.Controllers
         }
 
         [HttpPost("{groupId}/add-user")]
-        public async Task<ActionResult> AddUsers(string groupId, [FromBody] AddUsersRequest request)
+        public async Task<ActionResult> AddUsers(Guid groupId, [FromBody] AddUsersRequest request)
         {
             // Validate request
             if (request.UserIds == null || request.UserIds.Count == 0)
@@ -68,7 +68,7 @@ namespace ExpenseSharingApp.Controllers
         }
 
         [HttpDelete("{groupId}/delete-user")]
-        public async Task<ActionResult> DeleteUsers(string groupId, [FromBody] DeleteUsersRequest request)
+        public async Task<ActionResult> DeleteUsers(Guid groupId, [FromBody] DeleteUsersRequest request)
         {
             // Validate request
             if (request.UserIds == null || request.UserIds.Count == 0)
@@ -97,7 +97,7 @@ namespace ExpenseSharingApp.Controllers
         }
 
         [HttpGet("{groupId}/expenses")]
-        public async Task<ActionResult<List<Expense>>> GetExpenses(string groupId)
+        public async Task<ActionResult<List<Expense>>> GetExpenses(Guid groupId)
         {
             // Check if group exists
             var groupExists = true; // Replace with actual group check logic
@@ -117,7 +117,7 @@ namespace ExpenseSharingApp.Controllers
         }
 
         [HttpGet("{groupId}/balances")]
-        public async Task<ActionResult<List<UserBalanceItem>>> GetBalances(string groupId)
+        public async Task<ActionResult<List<UserBalanceItem>>> GetBalances(Guid groupId)
         {
             // Check if group exists
             var groupExists = true; // Replace with actual group check logic
@@ -137,7 +137,7 @@ namespace ExpenseSharingApp.Controllers
         }
 
         [HttpPost("{groupId}/settle")]
-        public async Task<ActionResult> Settle(string groupId, [FromBody] SettleRequest request)
+        public async Task<ActionResult> Settle(Guid groupId, [FromBody] SettleRequest request)
         {
             // Check if group exists
             var groupExists = true; // Replace with actual group check logic
