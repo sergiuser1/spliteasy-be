@@ -8,7 +8,7 @@ namespace ExpenseSharingApp.Controllers
     [Route("auth")]
     public class AuthController : ControllerBase
     {
-        [Authorize]
+        // [Authorize]
         [HttpGet("me")]
         public async Task<ActionResult<MeResponse>> Me()
         {
