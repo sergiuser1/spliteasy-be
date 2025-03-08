@@ -9,13 +9,15 @@ namespace SplitEasy.Models
 
     public class SignUpRequest
     {
-        public string Username { get; set; }
-        public string Password { get; set; }
+        public required string Username { get; set; }
+        public required string Password { get; set; }
     }
 
     public class SignUpResponse
     {
-        public string Token { get; set; }
+        public required string Username { get; set; }
+        public required Guid UserId { get; set; }
+        public required string Token { get; set; }
     }
 
     public class SignInRequest

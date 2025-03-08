@@ -1,3 +1,5 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SplitEasy.Models;
@@ -37,7 +39,6 @@ namespace ExpenseSharingApp.Controllers
         [HttpPost("sign-up")]
         public async Task<ActionResult<SignUpResponse>> SignUp([FromBody] SignUpRequest request)
         {
-            // Validate request
             if (
                 string.IsNullOrWhiteSpace(request.Username)
                 || string.IsNullOrWhiteSpace(request.Password)
@@ -46,17 +47,17 @@ namespace ExpenseSharingApp.Controllers
                 return BadRequest("Username and password are required");
             }
 
-            // Check if user already exists
-            var userExists = false; // Replace with actual user check logic
-            if (userExists)
-            {
-                return StatusCode(401, "User already exists");
-            }
+            var token = "real-token.jpg";
+            var user = await authRepository.CreateUser(request.Username, request.Password);
 
-            // Create user and generate token
-            var token = "generated-jwt-token"; // Replace with actual token generation
-
-            return Ok(new SignUpResponse { Token = token });
+            return Ok(
+                new SignUpResponse
+                {
+                    Username = user.Username,
+                    UserId = user.Id,
+                    Token = token,
+                }
+            );
         }
 
         [HttpPost("sign-in")]

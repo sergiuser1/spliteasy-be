@@ -1,4 +1,5 @@
 using Microsoft.OpenApi.Models;
+using spliteasy.Api;
 using spliteasy.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -45,5 +46,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.MapControllers();
+app.UseMiddleware<ErrorHandlingMiddleware>();
 
 app.Run();
