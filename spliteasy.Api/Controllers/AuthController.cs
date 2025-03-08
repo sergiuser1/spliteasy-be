@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SplitEasy.Models;
 
@@ -7,13 +8,31 @@ namespace ExpenseSharingApp.Controllers
     [Route("auth")]
     public class AuthController : ControllerBase
     {
-        // In a real app, inject services like IUserService, IAuthService, etc.
-        
+        [Authorize]
+        [HttpGet("me")]
+        public async Task<ActionResult<MeResponse>> Me()
+        {
+            // var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            // var username = User.Identity?.Name;
+
+            // if (userId == null || username == null)
+            // {
+            //     return Unauthorized();
+            // }
+
+            return await Task.FromResult(
+                Ok(new MeResponse { UserId = Guid.NewGuid(), Username = "" })
+            );
+        }
+
         [HttpPost("sign-up")]
         public async Task<ActionResult<SignUpResponse>> SignUp([FromBody] SignUpRequest request)
         {
             // Validate request
-            if (string.IsNullOrWhiteSpace(request.Username) || string.IsNullOrWhiteSpace(request.Password))
+            if (
+                string.IsNullOrWhiteSpace(request.Username)
+                || string.IsNullOrWhiteSpace(request.Password)
+            )
             {
                 return BadRequest("Username and password are required");
             }
@@ -35,7 +54,10 @@ namespace ExpenseSharingApp.Controllers
         public async Task<ActionResult<SignInResponse>> SignIn([FromBody] SignInRequest request)
         {
             // Validate request
-            if (string.IsNullOrWhiteSpace(request.Username) || string.IsNullOrWhiteSpace(request.Password))
+            if (
+                string.IsNullOrWhiteSpace(request.Username)
+                || string.IsNullOrWhiteSpace(request.Password)
+            )
             {
                 return BadRequest("Username and password are required");
             }
@@ -51,11 +73,7 @@ namespace ExpenseSharingApp.Controllers
             var token = "generated-jwt-token"; // Replace with actual token generation
             var userId = Guid.NewGuid();
 
-            return Ok(new SignInResponse 
-            { 
-                UserId = userId,
-                Token = token 
-            });
+            return Ok(new SignInResponse { UserId = userId, Token = token });
         }
     }
 }

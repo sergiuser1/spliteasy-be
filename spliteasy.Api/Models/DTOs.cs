@@ -2,6 +2,12 @@
 namespace SplitEasy.Models
 {
     // Auth DTOs
+    public class MeResponse
+    {
+        public required string Username { get; set; }
+        public Guid UserId { get; set; }
+    }
+
     public class SignUpRequest
     {
         public string Username { get; set; }
