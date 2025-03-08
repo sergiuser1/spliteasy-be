@@ -1,12 +1,13 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SplitEasy.Models;
+using spliteasy.Persistence;
 
 namespace ExpenseSharingApp.Controllers
 {
     [ApiController]
     [Route("auth")]
-    public class AuthController : ControllerBase
+    public class AuthController(IAuthRepository authRepository) : ControllerBase
     {
         // [Authorize]
         [HttpGet("me")]
@@ -23,6 +24,14 @@ namespace ExpenseSharingApp.Controllers
             return await Task.FromResult(
                 Ok(new MeResponse { UserId = Guid.NewGuid(), Username = "" })
             );
+        }
+
+        [HttpGet("test")]
+        public async Task<ActionResult<MeResponse>> Test(Guid userId)
+        {
+            var result = await authRepository.GetUserById(userId);
+
+            return result is null ? NotFound() : Ok(result);
         }
 
         [HttpPost("sign-up")]

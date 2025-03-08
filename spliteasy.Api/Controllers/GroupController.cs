@@ -1,5 +1,5 @@
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SplitEasy.Models;
 
 namespace ExpenseSharingApp.Controllers
@@ -10,16 +10,18 @@ namespace ExpenseSharingApp.Controllers
     public class GroupsController : ControllerBase
     {
         // In a real app, inject services like IGroupService, IUserService, etc.
-        
+
         [HttpPost]
-        public async Task<ActionResult<CreateGroupResponse>> CreateGroup([FromBody] CreateGroupRequest request)
+        public async Task<ActionResult<CreateGroupResponse>> CreateGroup(
+            [FromBody] CreateGroupRequest request
+        )
         {
             // Validate request
             if (string.IsNullOrWhiteSpace(request.Name))
             {
                 return BadRequest("Name not provided");
             }
-            
+
             if (request.UserIds == null || request.UserIds.Count == 0)
             {
                 return BadRequest("No user provided for the group");
@@ -68,7 +70,10 @@ namespace ExpenseSharingApp.Controllers
         }
 
         [HttpDelete("{groupId}/delete-user")]
-        public async Task<ActionResult> DeleteUsers(Guid groupId, [FromBody] DeleteUsersRequest request)
+        public async Task<ActionResult> DeleteUsers(
+            Guid groupId,
+            [FromBody] DeleteUsersRequest request
+        )
         {
             // Validate request
             if (request.UserIds == null || request.UserIds.Count == 0)
@@ -109,7 +114,7 @@ namespace ExpenseSharingApp.Controllers
             // Get expenses
             var expenses = new GetExpensesResponse
             {
-                Expenses = new List<Expense>()
+                Expenses = new List<Expense>(),
                 // Populate with actual expenses
             };
 
@@ -129,7 +134,7 @@ namespace ExpenseSharingApp.Controllers
             // Get balances
             var balances = new GetBalancesResponse
             {
-                UserBalances = new List<UserBalanceItem>()
+                UserBalances = new List<UserBalanceItem>(),
                 // Populate with actual balances
             };
 
@@ -147,8 +152,8 @@ namespace ExpenseSharingApp.Controllers
             }
 
             // Validate request
-            // if (Guid.TryParse(request.PayerUserId)) || 
-            //     string.IsNullOrEmpty(request.ReceiverUserId) || 
+            // if (Guid.TryParse(request.PayerUserId)) ||
+            //     string.IsNullOrEmpty(request.ReceiverUserId) ||
             //     request.Amount <= 0)
             // {
             //     return BadRequest("Invalid settlement details");

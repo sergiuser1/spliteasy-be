@@ -1,0 +1,8 @@
+using spliteasy.Persistence.Models;
+
+namespace spliteasy.Persistence;
+
+public interface IAuthRepository
+{
+    public Task<User?> GetUserById(Guid userId);
+}

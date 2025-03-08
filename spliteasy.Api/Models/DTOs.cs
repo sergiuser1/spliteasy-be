@@ -1,4 +1,3 @@
-
 namespace SplitEasy.Models
 {
     // Auth DTOs
