@@ -1,7 +1,9 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using SplitEasy.Models;
 using spliteasy.Persistence;
 
@@ -9,31 +11,24 @@ namespace ExpenseSharingApp.Controllers
 {
     [ApiController]
     [Route("auth")]
-    public class AuthController(IAuthRepository authRepository) : ControllerBase
+    public class AuthController(IConfiguration configuration, IAuthRepository authRepository)
+        : ControllerBase
     {
-        // [Authorize]
+        [Authorize]
         [HttpGet("me")]
         public async Task<ActionResult<MeResponse>> Me()
         {
-            // var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            // var username = User.Identity?.Name;
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var username = User.Identity?.Name;
 
-            // if (userId == null || username == null)
-            // {
-            //     return Unauthorized();
-            // }
+            if (userId == null || username == null)
+            {
+                return Unauthorized();
+            }
 
             return await Task.FromResult(
-                Ok(new MeResponse { UserId = Guid.NewGuid(), Username = "" })
+                Ok(new MeResponse { UserId = Guid.Parse(userId), Username = username })
             );
-        }
-
-        [HttpGet("test")]
-        public async Task<ActionResult<MeResponse>> Test(Guid userId)
-        {
-            var result = await authRepository.GetUserById(userId);
-
-            return result is null ? NotFound() : Ok(result);
         }
 
         [HttpPost("sign-up")]
@@ -72,18 +67,36 @@ namespace ExpenseSharingApp.Controllers
                 return BadRequest("Username and password are required");
             }
 
-            // Check credentials
-            var credentialsValid = true; // Replace with actual credential validation
-            if (!credentialsValid)
+            var user = await authRepository.GetUser(request.Username, request.Password);
+
+            if (user == null)
             {
-                return StatusCode(403, "Wrong combination of username/password");
+                return Unauthorized("Invalid username or password");
             }
 
-            // Generate token
-            var token = "generated-jwt-token"; // Replace with actual token generation
-            var userId = Guid.NewGuid();
+            // Generate JWT token
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.UTF8.GetBytes(configuration["Jwt:Key"]!);
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(
+                    new[]
+                    {
+                        new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                        new Claim(ClaimTypes.Name, user.Username),
+                    }
+                ),
+                Expires = DateTime.UtcNow.AddHours(4),
+                SigningCredentials = new SigningCredentials(
+                    new SymmetricSecurityKey(key),
+                    SecurityAlgorithms.HmacSha256Signature
+                ),
+            };
 
-            return Ok(new SignInResponse { UserId = userId, Token = token });
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            var tokenString = tokenHandler.WriteToken(token);
+
+            return Ok(new SignInResponse { UserId = user.Id, Token = tokenString });
         }
     }
 }

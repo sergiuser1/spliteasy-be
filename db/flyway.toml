@@ -6,3 +6,8 @@ locations = ["filesystem:migrations"]
 url = "jdbc:postgresql://localhost:5432/spliteasy"
 user = "sergiuser"
 password = ""
+
+[environments.development]
+url = "jdbc:postgresql://dpg-cv6545btq21c73df4cb0-a.singapore-postgres.render.com/spliteasy_x41u"
+user = "sergiuser"
+password = "${FLYWAY_DEV_PASSWORD}"

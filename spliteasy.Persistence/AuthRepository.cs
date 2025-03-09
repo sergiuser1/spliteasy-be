@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using spliteasy.Persistence.Common;
 using spliteasy.Persistence.Models;
+using BC = BCrypt.Net.BCrypt;
 
 namespace spliteasy.Persistence;
 
@@ -31,12 +32,28 @@ public class AuthRepository : IAuthRepository
         {
             Username = username,
             Id = userId,
-
-            PasswordHash = password, // TODO: Not good
+            PasswordHash = BC.HashPassword(password),
         };
 
         await _context.Users.AddAsync(user);
         await _context.SaveChangesAsync();
+
+        return user;
+    }
+
+    public async Task<User> GetUser(string username, string password)
+    {
+        var user = await _context.Users.FirstOrDefaultAsync(x => x.Username == username);
+
+        if (user is null)
+        {
+            throw new UserNotFound($"User {username} already exists");
+        }
+
+        if (!BC.Verify(password, user.PasswordHash))
+        {
+            throw new WrongPassword($"Wrong password for user {username}");
+        }
 
         return user;
     }

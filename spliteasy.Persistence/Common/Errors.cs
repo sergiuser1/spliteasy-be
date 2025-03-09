@@ -33,3 +33,7 @@ public class ForbiddenException : Exception
 }
 
 public class UserExists(string message) : Exception(message) { }
+
+public class UserNotFound(string message) : Exception(message) { }
+
+public class WrongPassword(string message) : Exception(message) { }
