@@ -1,0 +1,8 @@
+services:
+  spliteasy-be:
+    container_name: spliteasy-be
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
