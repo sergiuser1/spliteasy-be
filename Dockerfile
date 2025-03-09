@@ -9,5 +9,6 @@ EXPOSE 8080
 ENV HTTP_PORT=8080
 FROM mcr.microsoft.com/dotnet/aspnet:9.0
 WORKDIR /App
+ENV  ASPNETCORE_ENVIRONMENT "Development"
 COPY --from=build /App/out .
 ENTRYPOINT ["dotnet", "spliteasy.Api.dll"]
