@@ -1,6 +1,7 @@
 using Microsoft.OpenApi.Models;
 using spliteasy.Api;
 using spliteasy.Api.Auth.Configuration;
+using spliteasy.Auth;
 using spliteasy.Persistence;
 using Swashbuckle.AspNetCore.Filters;
 
@@ -31,6 +32,10 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddDataServices(builder.Configuration);
 builder.Services.AddJwtAuth(builder.Configuration);
 
+builder.Services.AddScoped<IAuthService, AuthService>();
+
+builder.Services.AddProblemDetails();
+
 // Add JWT authentication to Swagger
 builder.Services.AddSwaggerGen(options =>
 {
@@ -44,25 +49,10 @@ builder.Services.AddSwaggerGen(options =>
             In = ParameterLocation.Header,
             Type = SecuritySchemeType.ApiKey,
             Scheme = "Bearer",
+            BearerFormat = "JWT",
         }
     );
 
-    options.AddSecurityRequirement(
-        new OpenApiSecurityRequirement
-        {
-            {
-                new OpenApiSecurityScheme
-                {
-                    Reference = new OpenApiReference
-                    {
-                        Type = ReferenceType.SecurityScheme,
-                        Id = "Bearer",
-                    },
-                },
-                Array.Empty<string>()
-            },
-        }
-    );
     options.OperationFilter<SecurityRequirementsOperationFilter>();
 });
 
@@ -80,6 +70,7 @@ if (app.Environment.IsDevelopment())
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API v1");
         c.EnableTryItOutByDefault();
     });
+    app.UseExceptionHandler();
 }
 
 app.UseHttpsRedirection();

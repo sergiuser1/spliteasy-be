@@ -47,12 +47,12 @@ public class AuthRepository : IAuthRepository
 
         if (user is null)
         {
-            throw new UserNotFound($"User {username} already exists");
+            throw new UserNotFound($"User '{username}' already exists");
         }
 
         if (!BC.Verify(password, user.PasswordHash))
         {
-            throw new WrongPassword($"Wrong password for user {username}");
+            throw new WrongPassword($"Wrong password for user '{username}'");
         }
 
         return user;

@@ -33,59 +33,28 @@ public class ErrorHandlingMiddleware
 
         var errorResponse = exception switch
         {
-            NotFoundException => CreateErrorResponse(
-                StatusCodes.Status404NotFound,
-                "Resource not found",
-                exception
-            ),
-            ValidationException => CreateErrorResponse(
-                StatusCodes.Status400BadRequest,
-                "Validation failed",
-                exception
-            ),
-            UnauthorizedException => CreateErrorResponse(
+            UserExists => CreateErrorResponse(StatusCodes.Status409Conflict, "User already exists"),
+
+            WrongPassword => CreateErrorResponse(
                 StatusCodes.Status401Unauthorized,
-                "Unauthorized access",
-                exception
-            ),
-            ForbiddenException => CreateErrorResponse(
-                StatusCodes.Status403Forbidden,
-                "Forbidden",
-                exception
-            ),
-            //
-            // Custom errors
-            UserExists => CreateErrorResponse(
-                StatusCodes.Status409Conflict,
-                "User already exists",
-                null
+                "Wrong password"
             ),
 
-            _ => CreateErrorResponse(
-                StatusCodes.Status500InternalServerError,
-                "An unexpected error occurred",
-                exception
-            ),
+            _ => null,
         };
 
-        // TODO: Do this properly, split into handled and not handled errors
-        if (errorResponse.StatusCode == StatusCodes.Status500InternalServerError)
+        if (errorResponse is null)
         {
             _logger.LogError(exception, "An unhandled exception occurred.");
+            throw exception;
         }
 
         response.StatusCode = errorResponse.StatusCode;
         await response.WriteAsync(JsonSerializer.Serialize(errorResponse));
     }
 
-    private ErrorResponse CreateErrorResponse(int statusCode, string message, Exception? exception)
+    private ErrorResponse CreateErrorResponse(int statusCode, string message)
     {
-        return new ErrorResponse
-        {
-            StatusCode = statusCode,
-            Message = message,
-            DetailedMessage = exception?.Message ?? "",
-            StackTrace = exception?.StackTrace ?? "",
-        };
+        return new ErrorResponse { StatusCode = statusCode, Message = message };
     }
 }
