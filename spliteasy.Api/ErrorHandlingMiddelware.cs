@@ -33,7 +33,11 @@ public class ErrorHandlingMiddleware
 
         var errorResponse = exception switch
         {
-            UserExists => CreateErrorResponse(StatusCodes.Status409Conflict, "User already exists"),
+            UserExists => CreateErrorResponse(StatusCodes.Status409Conflict, exception.Message),
+
+            GroupExists => CreateErrorResponse(StatusCodes.Status409Conflict, exception.Message),
+
+            UserNotFound => CreateErrorResponse(StatusCodes.Status404NotFound, exception.Message),
 
             WrongPassword => CreateErrorResponse(
                 StatusCodes.Status401Unauthorized,

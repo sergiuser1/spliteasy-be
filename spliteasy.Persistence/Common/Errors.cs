@@ -11,3 +11,5 @@ public class UserExists(string message) : Exception(message) { }
 public class UserNotFound(string message) : Exception(message) { }
 
 public class WrongPassword(string message) : Exception(message) { }
+
+public class GroupExists(string message) : Exception(message) { }

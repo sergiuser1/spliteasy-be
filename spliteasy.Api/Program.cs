@@ -33,6 +33,7 @@ builder.Services.AddDataServices(builder.Configuration);
 builder.Services.AddJwtAuth(builder.Configuration);
 
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IGroupRepository, GroupRepository>();
 
 builder.Services.AddProblemDetails();
 

@@ -1,43 +1,38 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SplitEasy.Models;
+using spliteasy.Persistence;
 
 namespace ExpenseSharingApp.Controllers;
 
 [ApiController]
 [Route("groups")]
 [Authorize]
-public class GroupsController : ControllerBase
+public class GroupsController(IGroupRepository groupRepository) : ControllerBase
 {
     // In a real app, inject services like IGroupService, IUserService, etc.
 
     [HttpPost]
     public async Task<ActionResult<CreateGroupResponse>> CreateGroup(
-        [FromBody] CreateGroupRequest request
+        [FromBody] CreateGroupRequest groupRequest
     )
     {
-        // Validate request
-        if (string.IsNullOrWhiteSpace(request.Name))
+        if (string.IsNullOrWhiteSpace(groupRequest.Name))
         {
             return BadRequest("Name not provided");
         }
 
-        if (request.UserIds == null || request.UserIds.Count == 0)
+        if (groupRequest.UserIds == null || groupRequest.UserIds.Count == 0)
         {
             return BadRequest("No user provided for the group");
         }
 
-        // Check if all users exist
-        var allUsersExist = true; // Replace with actual user check logic
-        if (!allUsersExist)
-        {
-            return NotFound("Member not found");
-        }
+        // TODO: Check if all users exist
 
-        // Create group
-        var groupId = Guid.NewGuid();
 
-        return Ok(new CreateGroupResponse { GroupId = groupId });
+        var group = await groupRepository.CreateGroup(groupRequest.Name, groupRequest.UserIds);
+
+        return Ok(new CreateGroupResponse { GroupId = group.Id });
     }
 
     [HttpPost("{groupId}/add-user")]

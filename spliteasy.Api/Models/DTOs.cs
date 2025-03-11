@@ -35,8 +35,8 @@ namespace SplitEasy.Models
     // Group DTOs
     public class CreateGroupRequest
     {
-        public string Name { get; set; }
-        public List<Guid> UserIds { get; set; }
+        public required string Name { get; set; }
+        public required List<Guid> UserIds { get; set; }
     }
 
     public class CreateGroupResponse
