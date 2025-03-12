@@ -2,17 +2,18 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SplitEasy.Models;
 using spliteasy.Persistence;
+using spliteasy.Persistence.Common;
 
-namespace ExpenseSharingApp.Controllers;
+namespace spliteasy.Api.Controllers;
 
 [ApiController]
 [Route("groups")]
 [Authorize]
 public class GroupsController(IGroupRepository groupRepository) : ControllerBase
 {
-    // In a real app, inject services like IGroupService, IUserService, etc.
-
     [HttpPost]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status409Conflict)]
     public async Task<ActionResult<CreateGroupResponse>> CreateGroup(
         [FromBody] CreateGroupRequest groupRequest
     )
@@ -27,41 +28,24 @@ public class GroupsController(IGroupRepository groupRepository) : ControllerBase
             return BadRequest("No user provided for the group");
         }
 
-        // TODO: Check if all users exist
-
-
         var group = await groupRepository.CreateGroup(groupRequest.Name, groupRequest.UserIds);
 
         return Ok(new CreateGroupResponse { GroupId = group.Id });
     }
 
     [HttpPost("{groupId}/add-user")]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status409Conflict)]
     public async Task<ActionResult> AddUsers(Guid groupId, [FromBody] AddUsersRequest request)
     {
-        // Validate request
         if (request.UserIds == null || request.UserIds.Count == 0)
         {
             return BadRequest("No user provided for the group");
         }
 
-        // Check if group exists
-        var groupExists = true; // Replace with actual group check logic
-        if (!groupExists)
-        {
-            return NotFound("Group not found");
-        }
+        var group = await groupRepository.AddUsersToGroup(groupId, request.UserIds);
 
-        // Check if all users exist
-        var allUsersExist = true; // Replace with actual user check logic
-        if (!allUsersExist)
-        {
-            return NotFound("User not found");
-        }
-
-        // Add users to group
-        // Implementation would go here
-
-        return await Task.FromResult(Ok());
+        return Ok();
     }
 
     [HttpDelete("{groupId}/delete-user")]

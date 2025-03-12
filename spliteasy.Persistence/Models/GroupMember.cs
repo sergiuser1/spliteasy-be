@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-
 namespace spliteasy.Persistence.Models;
 
 public partial class GroupMember

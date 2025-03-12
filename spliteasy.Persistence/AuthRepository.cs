@@ -23,7 +23,7 @@ public class AuthRepository : IAuthRepository
     {
         if (await _context.Users.AnyAsync(x => x.Username == username))
         {
-            throw new UserExists($"User {username} already exists");
+            throw new AlreadyExists($"User {username} already exists");
         }
 
         Guid userId = Guid.NewGuid();
@@ -47,7 +47,7 @@ public class AuthRepository : IAuthRepository
 
         if (user is null)
         {
-            throw new UserNotFound($"User '{username}' already exists");
+            throw new NotFound($"User '{username}' not found");
         }
 
         if (!BC.Verify(password, user.PasswordHash))

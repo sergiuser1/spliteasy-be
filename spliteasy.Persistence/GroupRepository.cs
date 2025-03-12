@@ -11,7 +11,7 @@ public class GroupRepository(AppDbContext context) : IGroupRepository
         var groupExists = await context.Groups.AnyAsync(x => x.Name == groupName);
         if (groupExists)
         {
-            throw new GroupExists($"Group '{groupName}' already exists");
+            throw new AlreadyExists($"Group '{groupName}' already exists");
         }
 
         var users = await context.Users.Where(u => userIds.Contains(u.Id)).ToListAsync();
@@ -20,7 +20,7 @@ public class GroupRepository(AppDbContext context) : IGroupRepository
         {
             var foundUserIds = users.Select(u => u.Id).ToHashSet();
             var missingUserIds = userIds.Where(id => !foundUserIds.Contains(id)).ToList();
-            throw new UserNotFound($"Users with IDs {string.Join(", ", missingUserIds)} not found");
+            throw new NotFound($"Users with IDs {string.Join(", ", missingUserIds)} not found");
         }
 
         var group = new Group
@@ -40,4 +40,49 @@ public class GroupRepository(AppDbContext context) : IGroupRepository
 
         return group;
     }
+
+    public async Task<Group> AddUsersToGroup(Guid groupId, List<Guid> userIds)
+    {
+        var group = await context
+            .Groups.Include(x => x.GroupMembers)
+            .FirstOrDefaultAsync(x => x.Id == groupId);
+
+        if (group is null)
+        {
+            throw new NotFound($"Group with ID '{groupId}' does not exist");
+        }
+
+        if (group.GroupMembers.Any(x => userIds.Contains(x.UserId)))
+        {
+            var groupMembersIds = group.GroupMembers.Select(u => u.UserId).ToHashSet();
+            var alreadyExistingMembers = userIds.Where(id => groupMembersIds.Contains(id)).ToList();
+
+            throw new AlreadyExists(
+                $"Group with ID '{groupId}' already contains users '{string.Join(", ", alreadyExistingMembers)}"
+            );
+        }
+
+        var users = await context.Users.Where(u => userIds.Contains(u.Id)).ToListAsync();
+
+        if (users.Count != userIds.Count)
+        {
+            var foundUserIds = users.Select(u => u.Id).ToHashSet();
+            var missingUserIds = userIds.Where(id => !foundUserIds.Contains(id)).ToList();
+            throw new NotFound($"Users with IDs {string.Join(", ", missingUserIds)} not found");
+        }
+
+        foreach (var user in users)
+        {
+            group.GroupMembers.Add(new GroupMember { UserId = user.Id, GroupId = group.Id });
+        }
+
+        context.Groups.Update(group);
+        await context.SaveChangesAsync();
+
+        return group;
+    }
+
+
+    // public async Task AddExpenseToGroup(string 
+
 }

@@ -56,7 +56,6 @@ public class AuthController(IAuthService authService, IAuthRepository authReposi
     [HttpPost("sign-in")]
     public async Task<ActionResult<SignInResponse>> SignIn([FromBody] SignInRequest request)
     {
-        // Validate request
         if (
             string.IsNullOrWhiteSpace(request.Username)
             || string.IsNullOrWhiteSpace(request.Password)

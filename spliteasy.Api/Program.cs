@@ -3,7 +3,6 @@ using spliteasy.Api;
 using spliteasy.Api.Auth.Configuration;
 using spliteasy.Auth;
 using spliteasy.Persistence;
-using Swashbuckle.AspNetCore.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,7 +25,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "SplitEasy API", Version = "v1" });
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "SplitEasy API", Version = "v1.1" });
 });
 
 builder.Services.AddDataServices(builder.Configuration);

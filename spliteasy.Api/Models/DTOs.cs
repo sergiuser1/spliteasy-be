@@ -46,15 +46,14 @@ namespace SplitEasy.Models
 
     public class AddUsersRequest
     {
-        public List<Guid> UserIds { get; set; }
+        public required List<Guid> UserIds { get; set; }
     }
 
     public class DeleteUsersRequest
     {
-        public List<Guid> UserIds { get; set; }
+        public required List<Guid> UserIds { get; set; }
     }
 
-    // Expense DTOs
     public class ExpenseSplitDetail
     {
         public Guid UserId { get; set; }
@@ -63,17 +62,17 @@ namespace SplitEasy.Models
 
     public class ExpenseSplit
     {
-        public string Type { get; set; }
-        public List<ExpenseSplitDetail> Details { get; set; }
+        public required string Type { get; set; }
+        public required List<ExpenseSplitDetail> Details { get; set; }
     }
 
     public class Expense
     {
-        public string Title { get; set; }
+        public required string Title { get; set; }
         public decimal Amount { get; set; }
         public DateTime Date { get; set; }
         public Guid PaidByUserId { get; set; }
-        public ExpenseSplit Split { get; set; }
+        public required ExpenseSplit Split { get; set; }
     }
 
     public class GetExpensesResponse
@@ -81,7 +80,6 @@ namespace SplitEasy.Models
         public List<Expense> Expenses { get; set; }
     }
 
-    // Balance DTOs
     public class UserBalance
     {
         public Guid UserId { get; set; }

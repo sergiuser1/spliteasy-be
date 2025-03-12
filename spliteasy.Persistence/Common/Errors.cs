@@ -6,10 +6,8 @@ public class ErrorResponse
     public required string Message { get; set; }
 }
 
-public class UserExists(string message) : Exception(message) { }
+public class AlreadyExists(string message) : Exception(message) { }
 
-public class UserNotFound(string message) : Exception(message) { }
+public class NotFound(string message) : Exception(message) { }
 
 public class WrongPassword(string message) : Exception(message) { }
-
-public class GroupExists(string message) : Exception(message) { }
