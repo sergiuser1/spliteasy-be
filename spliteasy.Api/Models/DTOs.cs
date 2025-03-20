@@ -1,3 +1,5 @@
+using spliteasy.Persistence.Models;
+
 namespace SplitEasy.Models
 {
     // Auth DTOs
@@ -60,19 +62,13 @@ namespace SplitEasy.Models
         public decimal Amount { get; set; }
     }
 
-    public class ExpenseSplit
-    {
-        public required string Type { get; set; }
-        public required List<ExpenseSplitDetail> Details { get; set; }
-    }
-
     public class Expense
     {
         public required string Title { get; set; }
         public decimal Amount { get; set; }
         public DateTime Date { get; set; }
         public Guid PaidByUserId { get; set; }
-        public required ExpenseSplit Split { get; set; }
+        public required ExpenseTypeEnum Split { get; set; }
     }
 
     public class GetExpensesResponse

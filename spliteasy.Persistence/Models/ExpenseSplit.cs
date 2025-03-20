@@ -10,7 +10,7 @@ public partial class ExpenseSplit
 
     public decimal? AmountExtra { get; set; }
 
-    public virtual Expense Expense { get; set; } = null!;
+    public virtual ExpenseEntity Expense { get; set; } = null!;
 
     public virtual User User { get; set; } = null!;
 }

@@ -8,7 +8,7 @@ public partial class AppDbContext : DbContext
     public AppDbContext(DbContextOptions<AppDbContext> options)
         : base(options) { }
 
-    public virtual required DbSet<Expense> Expenses { get; set; }
+    public virtual required DbSet<ExpenseEntity> Expenses { get; set; }
 
     public virtual required DbSet<ExpenseSplit> ExpenseSplits { get; set; }
 
@@ -24,7 +24,7 @@ public partial class AppDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Expense>(entity =>
+        modelBuilder.Entity<ExpenseEntity>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("expenses_pkey");
 

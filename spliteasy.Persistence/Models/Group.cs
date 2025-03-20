@@ -10,7 +10,7 @@ public partial class Group
 
     public DateTime? CreatedAt { get; set; }
 
-    public virtual ICollection<Expense> Expenses { get; set; } = new List<Expense>();
+    public virtual ICollection<ExpenseEntity> Expenses { get; set; } = new List<ExpenseEntity>();
 
     public virtual ICollection<GroupMember> GroupMembers { get; set; } = new List<GroupMember>();
 }

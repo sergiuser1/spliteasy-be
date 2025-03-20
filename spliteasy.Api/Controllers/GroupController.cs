@@ -77,6 +77,12 @@ public class GroupsController(IGroupRepository groupRepository) : ControllerBase
         return Ok();
     }
 
+    [HttpPost("{groupId}/expense")]
+    public async Task<ActionResult<Guid>> AddExpense(Guid groupId, [FromBody] Expense expense)
+    {
+        return Guid.NewGuid();
+    }
+
     [HttpGet("{groupId}/expenses")]
     public async Task<ActionResult<List<Expense>>> GetExpenses(Guid groupId)
     {

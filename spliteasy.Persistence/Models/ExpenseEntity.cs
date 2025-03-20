@@ -1,6 +1,6 @@
 namespace spliteasy.Persistence.Models;
 
-public partial class Expense
+public class ExpenseEntity
 {
     public Guid Id { get; set; }
 

@@ -82,7 +82,22 @@ public class GroupRepository(AppDbContext context) : IGroupRepository
         return group;
     }
 
+    public async Task AddExpenseToGroup(ExpenseEntity expense)
+    {
+        var group = await context
+            .Groups.Include(x => x.GroupMembers)
+            .FirstOrDefaultAsync(x => x.Id == expense.GroupId);
 
-    // public async Task AddExpenseToGroup(string 
+        if (group is null)
+        {
+            throw new NotFound($"Group with ID '{expense.GroupId}' does not exist");
+        }
 
+        if (!group.GroupMembers.Any(x => x.UserId == expense.UserId))
+        {
+            throw new NotFound(
+                $"Group with ID '{expense.GroupId}' does not containe user '{expense.UserId}'"
+            );
+        }
+    }
 }
